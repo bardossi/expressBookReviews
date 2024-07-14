@@ -63,16 +63,25 @@ public_users.get('/isbn/:isbn', async function (req, res) {
 });
 
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
+async function fetchBooksByAuthor(author) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      let bookByAuthor = [];
+      for (let key in books) {
+        if (books[key].author === author) {
+          bookByAuthor.push(books[key]);
+        }
+      }
+      resolve(bookByAuthor);
+    }, 1000); // Simulating a delay
+  });
+}
+
+public_users.get('/author/:author', async function (req, res) {
   //Write your code here
   const author = req.params.author;
-  let bookByAuthor = [];
+  const bookByAuthor = await fetchBooksByAuthor(author);
 
-  for (key in books) {
-    if (books[key].author === author) {
-      bookByAuthor.push(books[key]);
-    }
-  }
   if (bookByAuthor.length > 0) {
     return res.status(200).json(bookByAuthor);
   } else {
