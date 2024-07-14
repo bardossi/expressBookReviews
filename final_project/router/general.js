@@ -90,16 +90,25 @@ public_users.get('/author/:author', async function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+async function fetchBooksByTitle(title) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      let bookByTitle = [];
+      for (let key in books) {
+        if (books[key].title === title) {
+          bookByTitle.push(books[key]);
+        }
+      }
+      resolve(bookByTitle);
+    }, 1000); // Simulating a delay
+  });
+}
+
+public_users.get('/title/:title', async function (req, res) {
   //Write your code here
   const title = req.params.title;
-  let bookByTitle = [];
+  const bookByTitle = await fetchBooksByTitle(title);
 
-  for (key in books) {
-    if (books[key].title === title) {
-      bookByTitle.push(books[key]);
-    }
-  }
   if (bookByTitle.length > 0) {
     return res.status(200).json(bookByTitle);
   } else {
