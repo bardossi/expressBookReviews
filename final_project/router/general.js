@@ -37,7 +37,7 @@ const doesExist = (username) => {
 }
 
 // Get the book list available in the shop
-public_users.get('/', function (req, res) {
+public_users.get('/', async function (req, res) {
   //Write your code here
   res.send(JSON.stringify(books));
 });
