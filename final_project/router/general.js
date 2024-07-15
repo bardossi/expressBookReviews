@@ -39,28 +39,29 @@ const doesExist = (username) => {
 // Get the book list available in the shop
 public_users.get('/', async function (req, res) {
   //Write your code here
-  res.send(JSON.stringify(books));
+  res.send(books);
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', async function (req, res) {
-  //Write your code here
+public_users.get('/isbn/:isbn', function (req, res) {
   const isbn = req.params.isbn;
-  let bookByIsbn = null;
 
-  for (key in books) {
-    if (books[key].isbn === isbn) {
-      bookByIsbn = await books[key];
-      break;
+  new Promise((resolve, reject) => {
+    const bookByIsbn = books[isbn];
+    if (bookByIsbn) {
+      resolve(bookByIsbn);
+    } else {
+      reject({ message: "Book not found" });
     }
-  }
-  if (bookByIsbn) {
-    return res.status(200).json(bookByIsbn);
-  } else {
-    return res.status(404).json({ message: "Book not found" });
-  }
-
+  })
+    .then(book => {
+      res.status(200).json(book);
+    })
+    .catch(err => {
+      res.status(404).json(err);
+    });
 });
+
 
 // Get book details based on author
 async function fetchBooksByAuthor(author) {
@@ -120,15 +121,11 @@ public_users.get('/title/:title', async function (req, res) {
 public_users.get('/review/:isbn', function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
-  let reviewByIsbn = null;
+  const book = books[isbn];
 
-  for (key in books) {
-    if (books[key].isbn === isbn) {
-      reviewByIsbn = books[key]["reviews"];
-    }
-  }
-  if (reviewByIsbn) {
-    return res.status(200).json(reviewByIsbn);
+  if (book) {
+    const reviews = book.reviews || {};
+    return res.status(200).json(reviews);
   } else {
     return res.status(404).json({ message: "Book not found" });
   }

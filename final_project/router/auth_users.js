@@ -70,23 +70,16 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   }
 
   // Find the book with the given ISBN
-  let bookFound = null;
-  for (let key in books) {
-    if (books[key].isbn === isbn) {
-      bookFound = books[key];
-      break;
-    }
-  }
+  let bookFound = books[isbn];
 
   if (bookFound) {
-    // Initialize the reviews object if it doesn't exist
     if (!bookFound.reviews) {
       bookFound.reviews = {};
     }
 
     // Add or update the review for the user
     bookFound.reviews[username] = review;
-    return res.status(200).json({ message: "Review added successfully", book: bookFound });
+    return res.status(200).json({ message: `The review for the book with ISBN ${isbn} has been added/updated` });
   } else {
     return res.status(404).json({ message: "Book not found" });
   }
@@ -102,23 +95,16 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
   }
 
   // Find the book with the given ISBN
-  let bookFound = null;
-  for (let key in books) {
-    if (books[key].isbn === isbn) {
-      bookFound = books[key];
-      break;
-    }
-  }
+  let bookFound = books[isbn];
 
   if (bookFound) {
-    // Initialize the reviews object if it doesn't exist
     if (!bookFound.reviews) {
       bookFound.reviews = {};
     }
 
     // Delete the review for the user
     delete bookFound.reviews[username];
-    return res.status(200).json({ message: "Review deleted successfully", book: bookFound });
+    return res.status(200).json({ message: `Review for ISBN ${isbn} for user ${username} deleted successfully` });
   } else {
     return res.status(404).json({ message: "Book not found" });
   }
